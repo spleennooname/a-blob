@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "> 2%"
+          ]
+        }
+      }
+    ],
+  ],
+  "plugins": [
+    "babel-plugin-syntax-dynamic-import"
+  ]
+}
