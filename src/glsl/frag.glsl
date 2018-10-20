@@ -15,7 +15,7 @@ const float EPSILON = 0.0001;
 
 // phong shading constants
 
-#define AMBIENT vec3(1.0, 0.4, 1.0)
+#define AMBIENT vec3(1.0, 0.4, 1.0) * 0.25
 #define DIFFUSE vec3(1.0, 0.0, 0.0)
 #define SPECULAR vec3(1.0, 1.0, 1.0)
 #define SHININESS 8.0
@@ -54,23 +54,10 @@ mat4 rotationMatrix(vec3 axis, float angle) {
     );
 }
 
-/* mat4 viewMatrix(vec3 eye, vec3 center, vec3 up) {
-    vec3 f = normalize(center - eye);
-    vec3 s = normalize(cross(f, up));
-    vec3 u = cross(s, f);
-    return mat4(
-        vec4(s, 0.0),
-        vec4(u, 0.0),
-        vec4(-f, 0.0),
-        vec4(0.0, 0.0, 0.0, 1)
-    );
-}
- */
 vec3 rotator(vec3 p, mat4 m) {
     vec3 q = (m * vec4(p, 0.0)).xyz;
     return q;
 }
-
 
 float scene(vec3 p) {
     vec3 t = twist(p);
@@ -117,14 +104,25 @@ vec3 rayDirection(float fov, vec2 size, vec2 fragCoord) {
     return normalize(vec3(xy, -z));
 }
 
+/**
+ * Using the gradient of the SDF, estimate the normal on the surface at point p.
+ */
 vec3 estimateNormal(vec3 p) {
-    return normalize( vec3(
-        scene(vec3(p.x + EPSILON, p.y, p.z)) - scene(vec3(p.x - EPSILON, p.y, p.z)),
-        scene(vec3(p.x, p.y + EPSILON, p.z)) - scene(vec3(p.x, p.y - EPSILON, p.z)),
-        scene(vec3(p.x, p.y, p.z + EPSILON)) - scene(vec3(p.x, p.y, p.z - EPSILON))
-    ));
-}
 
+    vec3 p_x_1 = vec3(p.x + EPSILON, p.y, p.z);
+    vec3 p_x_2 = vec3(p.x - EPSILON, p.y, p.z);
+    float x = scene(p_x_1) - scene(p_x_2);
+
+    vec3 p_y_1 = vec3(p.x, p.y + EPSILON, p.z);
+    vec3 p_y_2 = vec3(p.x, p.y - EPSILON, p.z);
+    float y = scene(p_y_1) - scene( p_y_2);
+
+    vec3 p_z_1 = vec3(p.x, p.y, p.z + EPSILON);
+    vec3 p_z_2 = vec3(p.x, p.y, p.z - EPSILON);
+    float z = scene(p_z_1) - scene(p_z_2);
+
+    return normalize( vec3(x, y, z ));
+}
 
 vec3 phongLighting(vec3 diffuse, vec3 specular, float alpha, vec3 p, vec3 eye, vec3 lightPos, vec3 lightIntensity) {
     vec3 N = estimateNormal(p);
@@ -163,11 +161,25 @@ vec3 phongLighting(vec3 diffuse, vec3 specular, float alpha, vec3 p, vec3 eye, v
  * See https://en.wikipedia.org/wiki/Phong_reflection_model#Description
  */
 vec3 phongIllumination(vec3 ambient, vec3 diffuse, vec3 specular, float alpha, vec3 p, vec3 eye) {
-    const vec3 ambientLight = 0.25 * vec3(1.0, 1.0, 1.0);
-    vec3 color = ambientLight * ambient;
-    vec3 light1Pos = vec3(4.0, 5.0, 5.0);
+
+    vec3 color = ambient;
+    //vec3 light1Pos = vec3(4.0, 5.0, 5.0);
+
+    vec3 light1Pos = vec3(4.0 * sin(uTime),
+                          2.0,
+                          4.0 * cos(uTime));
+
+    vec3 light2Pos = vec3(4.0 * sin(uTime),
+                          2.0,
+                          5.0 * sin(uTime));
+
     vec3 light1Intensity = vec3(0.4, 0.4, 0.4);
+
+    vec3 light2Intensity = vec3(0.2, 0.2, 0.2);
+
     color += phongLighting(diffuse, specular, alpha, p, eye, light1Pos, light1Intensity);
+    color += phongLighting(diffuse, specular, alpha, p, eye, light2Pos, light2Intensity);
+
     return color;
 }
 

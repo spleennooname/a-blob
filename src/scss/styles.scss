@@ -6,8 +6,24 @@ body {
   text-align: center
 }
 
-canvas {
+#canvas {
   width: 100%;
-  max-width: 1400px;
+  max-width: 768px;
+  height: 50%;
+  transform: scale(1.5);
+}
+
+body>div:not(.demo){
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.demo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
   height: 100vh;
 }

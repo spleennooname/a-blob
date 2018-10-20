@@ -1,12 +1,12 @@
 {
-  "name": "zengl-poc",
-  "description": "zen webgl demo",
+  "name": "a-blob",
+  "description": "a blob with raymarching and phong shading. pure webgl, no frameworks.",
   "version": "0.0.1",
   "author": "Andrea Bovo <spleen666@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "deploy": "surge dist a-blob.surge.sh"
   },
@@ -33,6 +33,7 @@
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
     "webpack": "^3.6.0",
+    "webpack-concat-plugin": "^3.0.0",
     "webpack-dev-server": "^2.9.1"
   }
 }

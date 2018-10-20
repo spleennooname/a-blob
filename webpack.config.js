@@ -5,6 +5,8 @@ const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const ConcatPlugin = require('webpack-concat-plugin');
+
 const extractStyles = new ExtractTextPlugin('css/styles.min.css');
 
 const config = {
