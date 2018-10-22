@@ -117,13 +117,13 @@ function createShader(src, type) {
 }
 
 function resize() {
-  if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
-
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  if (canvas.width != w || canvas.height != h) {
+    canvas.width = w;
+    canvas.height = h;
     params.screenWidth = canvas.width;
     params.screenHeight = canvas.height;
-
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   }
 }
@@ -148,6 +148,7 @@ function render(time) {
   if (!program) {
     return;
   }
+
   // Clear the canvas AND the depth buffer.
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -164,7 +165,6 @@ function render(time) {
   gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
-
 }
 
 //

@@ -20,8 +20,6 @@ const float EPSILON = 0.0001;
 #define SPECULAR vec3(1.0, 1.0, 1.0)
 #define SHININESS 8.0
 
-/* Distance functions from http://iquilezles.org/www/articles/distfunctions/distfunctions.htm */
-
 /**
  * Signed distance function for a torus;
  */
@@ -40,7 +38,6 @@ vec3 twist(vec3 p) {
     return vec3(m * p.xz, p.y);
 }
 
-/* Rotation matrix function from http://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/ */
 mat4 rotationMatrix(vec3 axis, float angle) {
     vec3 a = normalize(axis);
     float s = sin(angle) * -1.0;
