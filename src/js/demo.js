@@ -13,6 +13,9 @@ let canvas,
   fragShader,
   program,
   vertexPosition,
+  frameBuffer,
+  texture1,
+  texture2,
 
   uTime,
   uResolution,
@@ -31,62 +34,88 @@ let canvas,
 const fps = 50;
 const interval = 1000 / fps;
 
-/** async function importShader(shader) {
-  let response = await fetch(shader);
-  let data = await response.text();
-  return data;
-}*/
-
 fragShader = require('../glsl/frag.glsl');
 vertexShader = require('../glsl/vert.glsl');
 
 function init() {
-  //fragShader = await importShader('./glsl/frag.glsl');
-  //vertexShader = await importShader('./glsl/vert.glsl');
-
-  canvas = document.querySelector('#canvas');
+  canvas = document.querySelector("#canvas");
 
   try {
-    gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
   } catch (err) {
-    console.log("no WebGL in da house.")
+    console.log("no WebGL in da house.");
     return;
   }
-  if (!(!!window.WebGLRenderingContext) || !gl) {
-    throw "no WebGL in da house."
+
+  if (!gl) {
+    throw "no WebGL in da house.";
+    return;
   }
 
   stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild(stats.domElement);
 
-  console.log("start WebGL demo...")
+  texture1 = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texture1);
 
+  texture2 = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture2);
+
+  // create a buffer with single clipspace (2 triangles)
   buffer = gl.createBuffer();
-
+  frameBuffer = gl.createFramebuffer();
   // Bind the position buffer.
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0]), gl.STATIC_DRAW);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([
+      -1.0,
+      -1.0,
+      1.0,
+      -1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0,
+      1.0,
+      -1.0,
+      1.0
+    ]),
+    gl.STATIC_DRAW
+  );
 
   //create program
   program = createProgram(vertexShader, fragShader);
-
-  // time
-  uTime = gl.getUniformLocation(program, 'uTime');
-  // resolution
-  uResolution = gl.getUniformLocation(program, 'uResolution');
-
+  if (!program) {
+    return;
+  }
   // Tell it to use our program (pair of shaders)
   gl.useProgram(program);
 
+  // time
+  uTime = gl.getUniformLocation(program, "uTime");
+  // resolution
+  uResolution = gl.getUniformLocation(program, "uResolution");
+
+  // Look up where the vertex data needs to
+  vertexPosition = gl.getAttribLocation(program, "position");
+
   then = window.performance.now();
   params.start_time = window.performance.now();
+
+  // Turn on the position attribute
+  gl.enableVertexAttribArray(vertexPosition);
+
+  // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+  gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0);
 
   animate();
 }
 
 function createProgram(vertex, fragment) {
-
   const program = gl.createProgram();
   const vert_shader = createShader(vertex, gl.VERTEX_SHADER);
   const frag_shader = createShader(fragment, gl.FRAGMENT_SHADER);
@@ -110,7 +139,11 @@ function createShader(src, type) {
   gl.shaderSource(shader, src);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.log((type == gl.vertexShader ? "VERTEX" : "FRAGMENT") + " SHADER:\n" + gl.getShaderInfoLog(shader));
+    console.log(
+      (type == gl.vertexShader ? "VERTEX" : "FRAGMENT") +
+      " SHADER:\n" +
+      gl.getShaderInfoLog(shader)
+    );
     return null;
   }
   return shader;
@@ -133,18 +166,16 @@ function animate() {
   now = window.performance.now();
   delta = now - then;
   if (delta > interval) {
-    then = now - (delta % interval);
+    then = now - delta % interval;
     let t = now / 1000;
     stats.begin();
     resize();
     render(t);
     stats.end();
   }
-
 }
 
 function render(time) {
-
   if (!program) {
     return;
   }
@@ -154,15 +185,6 @@ function render(time) {
 
   gl.uniform1f(uTime, time);
   gl.uniform2f(uResolution, params.screenWidth, params.screenHeight);
-
-  // Turn on the position attribute
-  gl.enableVertexAttribArray(vertexPosition);
-
-  // Bind the position buffer.
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-  // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-  gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
