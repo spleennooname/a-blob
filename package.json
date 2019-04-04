@@ -1,39 +1,34 @@
 {
   "name": "a-blob",
   "description": "a blob with raymarching and phong shading. pure webgl, no frameworks.",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "author": "Andrea Bovo <spleen666@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build": "cross-env NODE_ENV=production webpack --mode=production --config webpack.config.js",
+    "dev": "cross-env NODE_ENV=development  webpack-dev-server --config webpack.config.js",
     "deploy": "surge dist a-blob.surge.sh"
   },
-  "dependencies": {},
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ],
+  "dependencies": {
+    "gsap": "^2.0.2"
+  },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.2",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.4.2",
+    "babel-loader": "^8.0.5",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-preset-env": "^1.7.0",
-    "cross-env": "^5.0.5",
-    "css-loader": "^0.28.7",
-    "extract-text-webpack-plugin": "^3.0.2",
-    "file-loader": "^1.1.4",
+    "copy-webpack-plugin": "^4.6.0",
+    "cross-env": "^5.2.0",
+    "css-loader": "^2.1.0",
     "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.5.3",
-    "sass-loader": "^6.0.6",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "sass-loader": "^7.1.0",
     "shader-loader": "^1.3.1",
-    "simple-progress-webpack-plugin": "^1.1.2",
-    "style-loader": "^0.23.1",
-    "url-loader": "^1.1.2",
-    "webpack": "^3.6.0",
-    "webpack-concat-plugin": "^3.0.0",
-    "webpack-dev-server": "^2.9.1"
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
   }
 }

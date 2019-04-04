@@ -1,54 +1,41 @@
-
-
-
-
 // script
 
-"use strict"
+'use strict';
 
 let canvas,
   gl,
   buffer,
-  vertexShader,
-  fragShader,
+  vertexShader = require('../glsl/vert.glsl'),
+  fragShader = require('../glsl/frag.glsl'),
   program,
-  vertexPosition,
-  frameBuffer,
-  texture1,
-  texture2,
-
+  vertexPosition = [],
   uTime,
   uResolution,
-
   params = {
     screenWidth: 0,
     screenHeight: 0
   },
-
   stats,
-
   delta = 0,
   now = 0,
   then = 0;
 
-const fps = 50;
+const fps = 60;
 const interval = 1000 / fps;
 
-fragShader = require('../glsl/frag.glsl');
-vertexShader = require('../glsl/vert.glsl');
-
 function init() {
-  canvas = document.querySelector("#canvas");
+
+  canvas = document.querySelector('#canvas');
 
   try {
-    gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   } catch (err) {
-    console.log("no WebGL in da house.");
+    console.log('no WebGL in da house.');
     return;
   }
 
   if (!gl) {
-    throw "no WebGL in da house.";
+    throw 'no WebGL in da house.';
     return;
   }
 
@@ -56,34 +43,27 @@ function init() {
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild(stats.domElement);
 
-  texture1 = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, texture1);
-
-  texture2 = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture2);
-
   // create a buffer with single clipspace (2 triangles)
   buffer = gl.createBuffer();
-  frameBuffer = gl.createFramebuffer();
+
   // Bind the position buffer.
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
+    /**new Float32Array([
+      -1.0, -1.0,
+       1.0, -1.0,
+      -1.0,  1.0,
+       1.0, -1.0,
+       1.0,  1.0,
+      -1.0,  1.0
+    ]),*/
+    // quad
     new Float32Array([
-      -1.0,
-      -1.0,
-      1.0,
-      -1.0,
-      -1.0,
-      1.0,
-      1.0,
-      -1.0,
-      1.0,
-      1.0,
-      -1.0,
-      1.0
-    ]),
+      -1, -1,
+      -1,  1,
+       1, -1,
+       1,  1]),
     gl.STATIC_DRAW
   );
 
@@ -92,11 +72,13 @@ function init() {
   if (!program) {
     return;
   }
+
   // Tell it to use our program (pair of shaders)
   gl.useProgram(program);
 
   // time
   uTime = gl.getUniformLocation(program, "uTime");
+
   // resolution
   uResolution = gl.getUniformLocation(program, "uResolution");
 
@@ -141,8 +123,8 @@ function createShader(src, type) {
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.log(
       (type == gl.vertexShader ? "VERTEX" : "FRAGMENT") +
-      " SHADER:\n" +
-      gl.getShaderInfoLog(shader)
+        " SHADER:\n" +
+        gl.getShaderInfoLog(shader)
     );
     return null;
   }
@@ -186,7 +168,7 @@ function render(time) {
   gl.uniform1f(uTime, time);
   gl.uniform2f(uResolution, params.screenWidth, params.screenHeight);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
 //

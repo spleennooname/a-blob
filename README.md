@@ -20,18 +20,16 @@ Hello. You can consider this example as a knowledge base for learning the follow
 
 ``` bash
 # install dependencies
-yarn install
+npm i
 
 # serve with hot reload at https://localhost:8080
-yarn run dev
+npm run dev
 
 # build for production with minification
-yarn run build
+npm run build
 ```
 
 ## references
-
-take a look here
 
 * [http://iquilezles.org/www/articles/distfunctions/distfunctions.htm](http://iquilezles.org/www/articles/distfunctions/distfunctions.htm)
 * [http://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/](http://www.neilmendoza.com/glsl-rotation-about-an-arbitrary-axis/)
