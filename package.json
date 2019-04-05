@@ -11,6 +11,7 @@
     "deploy": "surge dist a-blob.surge.sh"
   },
   "dependencies": {
+    "detect-gpu": "0.0.40",
     "gsap": "^2.0.2"
   },
   "devDependencies": {

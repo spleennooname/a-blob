@@ -1,29 +1,56 @@
-// script
+import '../scss/styles.scss';
+
+import { getGPUTier } from 'detect-gpu';
 
 'use strict';
 
-let canvas,
-  gl,
+let canvas, gl,
+  GPUTier,
   positionBuffer,
   vertexShader = require('../glsl/vert.glsl'),
   fragShader = require('../glsl/frag.glsl'),
   program,
   rafID = -1,
   vertexPosition = [],
+  realToCSSPixels = 0,
+
   uTime,
   uResolution,
+
   screenWidth = 320,
   screenHeight = 320,
   stats,
   now = 0,
   then = 0;
 
-const fps = 60;
-const interval = 1000 / fps;
+let fps = 60;
+let interval = 1000 / fps;
+
+function getBestPixelRatio() {
+  return GPUTier.tier.indexOf("MOBILE_TIER_0") !== -1 || GPUTier.tier.indexOf("MOBILE_TIER_1") !== -1 && window.devicePixelRatio > 1 ? 1 : window.devicePixelRatio;
+}
+
+function getBestFPS() {
+  return GPUTier.tier.indexOf('MOBILE_TIER_0') !== -1 && window.devicePixelRatio >= 1 ? 50 : 60;
+}
 
 function init() {
-  canvas = document.querySelector('#canvas');
 
+  GPUTier = getGPUTier({
+    mobileBenchmarkPercentages: [10, 40, 30, 20], // (Default) [TIER_0, TIER_1, TIER_2, TIER_3]
+    desktopBenchmarkPercentages: [10, 40, 30, 20], // (Default) [TIER_0, TIER_1, TIER_2, TIER_3]
+  });
+
+  //console.log(GPUTier);
+  const log = 'devicePixelRatio=' + window.devicePixelRatio + ", applied: "+getBestPixelRatio()+" tier=" + GPUTier.tier + " type=" + GPUTier.type;
+
+  document.querySelector('.log').innerHTML = log;
+
+  realToCSSPixels = getBestPixelRatio();
+  fps = getBestFPS();
+  fps = interval / 1000;
+
+  canvas = document.querySelector('#canvas');
   try {
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   } catch (err) {
@@ -87,6 +114,8 @@ function init() {
   gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0);
 }
 
+
+
 function createProgram(vertex, fragment) {
   const program = gl.createProgram();
   const vs = createShader(vertex, gl.VERTEX_SHADER);
@@ -123,7 +152,6 @@ function createShader(src, type) {
 }
 
 function resize() {
-  var realToCSSPixels = window.devicePixelRatio;
 
  // Lookup the size the browser is displaying the canvas in CSS pixels
   // and compute a size needed to make our drawingbuffer match it in
