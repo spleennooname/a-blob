@@ -8,7 +8,7 @@ uniform vec2 uResolution;
 
 // raymarch constants
 
-const int MAX_MARCHING_STEPS = 255;
+const int MAX_MARCHING_STEPS = 100;
 const float MIN_DISTANCE = 0.0;
 const float MAX_DISTANCE = 120.0;
 const float EPSILON = 0.0001;
