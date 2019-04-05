@@ -123,11 +123,20 @@ function createShader(src, type) {
 }
 
 function resize() {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  if (canvas.width != w || canvas.height != h) {
-    canvas.width = w;
-    canvas.height = h;
+  var realToCSSPixels = window.devicePixelRatio;
+
+ // Lookup the size the browser is displaying the canvas in CSS pixels
+  // and compute a size needed to make our drawingbuffer match it in
+  // device pixels.
+  var displayWidth  = Math.floor(canvas.clientWidth  * realToCSSPixels);
+  var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
+
+  // Check if the canvas is not the same size.
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+     // Make the canvas the same size
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+
     screenWidth = canvas.width;
     screenHeight = canvas.height;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
