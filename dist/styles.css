@@ -9,8 +9,8 @@ body {
   width: 100%;
   max-width: 768px;
   height: 50%;
-  -webkit-transform: scale(1.5);
-  transform: scale(1.5); }
+  -webkit-transform: scale(1);
+  transform: scale(1); }
 
 body > div:not(.demo) {
   position: absolute;
