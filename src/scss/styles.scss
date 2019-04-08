@@ -6,6 +6,13 @@ body {
   text-align: center
 }
 
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+
 #canvas {
   width: 100%;
   max-width: 768px;

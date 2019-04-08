@@ -77,7 +77,7 @@ function init() {
 
   realToCSSPixels = getBestPixelRatio();
   fps = getBestFPS();
-  fps = interval / 1000;
+  interval = fps/ 1000;
 
   stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom

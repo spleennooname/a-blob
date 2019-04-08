@@ -5,7 +5,7 @@ precision highp float;
 
 uniform float uTime;
 uniform vec2 uResolution;
-
+/* uniform sampler2D uImage; */
 // raymarch constants
 
 const int MAX_MARCHING_STEPS = 100;
@@ -182,6 +182,10 @@ vec3 phongIllumination(vec3 ambient, vec3 diffuse, vec3 specular, float alpha, v
 
 void main() {
 
+    vec2 uv = gl_FragCoord.xy / uResolution.xy;
+
+    /* vec4 texcol = texture2D(uImage, uv); */
+
     // the direction
     vec3 dir = rayDirection(50.0, uResolution.xy, gl_FragCoord.xy);
 
@@ -203,5 +207,5 @@ void main() {
     // compute color for point
     vec3 color = phongIllumination(AMBIENT, DIFFUSE, SPECULAR, SHININESS, p, eye);
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor =  vec4(color, 1.0);
 }
